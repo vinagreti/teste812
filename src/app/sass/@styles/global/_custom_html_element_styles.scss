@@ -1,0 +1,17 @@
+a {
+  text-decoration: none;
+  outline: none;
+  color: inherit;
+}
+
+a, button, [routerLink] {
+  outline: none !important;
+}
+
+img {
+  outline: none;
+}
+
+table {
+  width: 100%;
+}

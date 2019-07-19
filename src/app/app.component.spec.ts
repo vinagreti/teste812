@@ -1,5 +1,6 @@
 import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { environment } from '@env/environment';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -26,6 +27,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to teste812!');
+    expect(compiled.querySelector('h1').textContent).toContain(`Bem vindo ${environment.appName}!`);
   });
 });
