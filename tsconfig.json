@@ -25,6 +25,9 @@
       "@components/*": [
         "src/app/components/*"
       ],
+      "@core/*": [
+        "src/app/core/*"
+      ],
       "@directives/*": [
         "src/app/directives/*"
       ],

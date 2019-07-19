@@ -1,0 +1,6 @@
+<h1>{{ 'app.title' | translate }}</h1>
+
+<div *ngIf="(lang$ | async) as lang">
+  <button mat-flat-button color="primary" (click)="setLanguage(languages.EN)" [disabled]="lang === languages.EN">EN</button>
+  <button mat-flat-button color="primary" (click)="setLanguage(languages.PT)" [disabled]="lang === languages.PT">PT</button>
+</div>
