@@ -1,8 +1,6 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LanguageModule } from './language';
-
-
+import { NgModule } from '@angular/core';
+import { LanguageModule } from '@services/language';
 
 @NgModule({
   declarations: [],

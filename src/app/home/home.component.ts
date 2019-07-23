@@ -1,15 +1,15 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AppLanguage } from '@models/language';
-import { LanguageService } from '@core/language';
+import { LanguageService } from '@services/language';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-demo',
-  templateUrl: './demo.component.html',
-  styleUrls: ['./demo.component.scss'],
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DemoComponent {
+export class HomeComponent {
 
   lang$: Observable<AppLanguage>;
 

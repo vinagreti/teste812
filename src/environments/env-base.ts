@@ -2,7 +2,7 @@ import { AppLanguage } from '@models/language';
 
 export interface AppEnvironment {
   appName: string;
-  basePath: string,
+  basePath: string;
   debug: boolean;
   defaultLanguage: AppLanguage;
   enabledLanguages: AppLanguage[];

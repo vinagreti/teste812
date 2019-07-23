@@ -1,18 +1,18 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-
-import { DemoRoutingModule } from './demo-routing.module';
-import { DemoComponent } from './demo.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { homeRoutingModule } from './home-routing.module';
+import { HomeComponent } from './home.component';
+
 
 @NgModule({
-  declarations: [DemoComponent],
+  declarations: [HomeComponent],
   imports: [
     CommonModule,
-    DemoRoutingModule,
+    homeRoutingModule,
     MatButtonModule,
     TranslateModule,
   ]
 })
-export class DemoModule { }
+export class HomeModule { }
