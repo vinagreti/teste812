@@ -18,11 +18,11 @@ export class HomeComponent {
   constructor(
     private lang: LanguageService
   ) {
-    this.lang$ = lang.languageChange;
+    this.lang$ = lang.lang$;
   }
 
   setLanguage(lang: AppLanguage) {
-    this.lang.setLanguage(lang);
+    this.lang.language = lang;
   }
 
 }

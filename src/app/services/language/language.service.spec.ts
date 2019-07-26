@@ -1,13 +1,24 @@
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-
-import { LanguageService } from './language.service';
 import { AppLanguage } from '@models/language';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpLoaderFactory } from './language.module';
+import { LanguageService } from './language.service';
+import { LanguageServiceTestingModule } from './testing';
+
 
 describe('LanguageService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [
-      TranslateModule.forRoot(),
+      LanguageServiceTestingModule,
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+        },
+      }),
+      HttpClientModule,
     ]
   }));
 
@@ -18,12 +29,18 @@ describe('LanguageService', () => {
 
   it('should get language', () => {
     const service: LanguageService = TestBed.get(LanguageService);
-    expect(service.getLanguage()).toBeTruthy();
+    expect(service.language).toBeTruthy();
   });
 
-  it('should set language', () => {
+  it('should set language to PT', () => {
     const service: LanguageService = TestBed.get(LanguageService);
-    service.setLanguage(AppLanguage.PT);
-    expect(service.getLanguage()).toEqual(AppLanguage.PT);
+    service.language = AppLanguage.PT;
+    expect(service.language).toEqual(AppLanguage.PT);
+  });
+
+  it('should set language to EN', () => {
+    const service: LanguageService = TestBed.get(LanguageService);
+    service.language = AppLanguage.EN;
+    expect(service.language).toEqual(AppLanguage.EN);
   });
 });

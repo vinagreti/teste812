@@ -1,8 +1,8 @@
-import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { environment } from '@env/environment';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageService } from './language.service';
 
 export const GLOBAL_TRANSLATION_PATH = `${environment.basePath}/assets/i18n/location.`;
@@ -22,7 +22,9 @@ export function HttpLoaderFactory(http: HttpClient) {
       },
     })
   ],
-  providers: [LanguageService],
+  providers: [
+    LanguageService
+  ],
 })
 export class LanguageModule {
 
@@ -31,7 +33,7 @@ export class LanguageModule {
     @Optional() @SkipSelf() parentModule: LanguageModule,
   ) {
     if (parentModule) {
-      throw new Error('LanguageModule.forRoot() is already being used in CoreModule. Use it in the CoreModule only');
+      throw new Error('LanguageModule is a Singleton module and is already being used by CoreModule. For tests use LanguageTestingModule');
     }
   }
 
