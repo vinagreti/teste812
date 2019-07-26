@@ -1,7 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AppLanguage } from '@models/language';
-import { LanguageService } from '@services/language';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -11,18 +8,6 @@ import { Observable } from 'rxjs';
 })
 export class HomeComponent {
 
-  lang$: Observable<AppLanguage>;
-
-  languages = AppLanguage;
-
-  constructor(
-    private lang: LanguageService
-  ) {
-    this.lang$ = lang.lang$;
-  }
-
-  setLanguage(lang: AppLanguage) {
-    this.lang.language = lang;
-  }
+  constructor() {}
 
 }

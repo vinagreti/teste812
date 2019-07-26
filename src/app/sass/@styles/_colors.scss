@@ -1,13 +1,13 @@
 // THEME COLORS
-$app-color-accent: #FFE700;
-$app-color-accent-light: lighten($app-color-accent, 50%);
-$app-color-accent-dark: darken($app-color-accent, 50%);
-$app-color-accent-contrast: #2F2F2F;
-
-$app-color-primary: #263238;
+$app-color-primary: #8A05BE;
 $app-color-primary-light: lighten($app-color-primary, 50%);
 $app-color-primary-dark: darken($app-color-primary, 50%);
 $app-color-primary-contrast: white;
+
+$app-color-accent: #15AA00;
+$app-color-accent-light: lighten($app-color-accent, 50%);
+$app-color-accent-dark: darken($app-color-accent, 50%);
+$app-color-accent-contrast: #2F2F2F;
 
 $app-color-warn: #f44336;
 $app-color-warn-light: lighten($app-color-warn, 50%);
