@@ -6,6 +6,7 @@ import { AppWrapperDefaultComponent, AppWrapperDefaultModule } from '@components
 const routes: Routes = [
   { path: '', component: AppWrapperDefaultComponent, children: [
     { path: '', loadChildren: () =>  import('./home/home.module').then(mod => mod.HomeModule) },
+    { path: '**', loadChildren: () =>  import('./static/not-found-page/not-found-page.module').then(mod => mod.NotFoundPageModule) },
   ] },
 ];
 
