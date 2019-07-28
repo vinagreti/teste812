@@ -1,6 +1,7 @@
+import { environment } from '@env/environment';
 import { AppLanguage } from '@models/language';
 
-export function getAppGenericLanguageFromLocale(lang: string): AppLanguage {
+function getAppGenericLanguageFromLocale(lang: string): AppLanguage {
   if (lang) {
     if (lang.length > 1) {
       return lang.substr(0, 2) as AppLanguage;
@@ -13,7 +14,7 @@ export function getAppGenericLanguageFromLocale(lang: string): AppLanguage {
 }
 
 export function isLanguageUsedByThisApp(lang: string) {
-  return Object.values(AppLanguage).includes(lang);
+  return [environment.defaultLanguage, ...environment.extraLanguages].includes(lang as AppLanguage);
 }
 
 export function getAppGenericaLanguage(lang: string): AppLanguage {

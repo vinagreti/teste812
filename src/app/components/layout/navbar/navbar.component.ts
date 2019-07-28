@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 })
 export class NavbarComponent implements OnInit {
 
-  enabledLanguages = environment.enabledLanguages;
+  appLanguages = [environment.defaultLanguage, ...environment.extraLanguages];
 
   lang$: Observable<AppLanguage>;
 

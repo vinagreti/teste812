@@ -28,12 +28,6 @@
       "@core/*": [
         "src/app/core/*"
       ],
-      "@directives/*": [
-        "src/app/directives/*"
-      ],
-      "@guards/*": [
-        "src/app/guards/*"
-      ],
       "@models/*": [
         "src/app/models/*"
       ],

@@ -1,5 +1,8 @@
 {
   "app": {
     "title": "Test 812"
+  },
+  "label": {
+    "Page_not_found": "Page not found"
   }
 }

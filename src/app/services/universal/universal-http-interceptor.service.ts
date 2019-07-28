@@ -5,15 +5,17 @@ import { REQUEST } from '@nguniversal/express-engine/tokens';
 import * as express from 'express';
 
 @Injectable()
-export class TranslateInterceptorService implements HttpInterceptor {
+export class UniversalHttpInterceptorService implements HttpInterceptor {
 
   private port = (process && process.env) ? process.env.PORT : environment.serverPort;
 
   constructor(@Inject(REQUEST) private innerRequest: express.Request) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler) {
-    const requestingLocationFile = request && request.url && request.url.includes('/assets/i18n/location');
-    if (requestingLocationFile) {
+
+    const isrelativePath = request && request.url && request.url.startsWith('/');
+
+    if (isrelativePath) {
       const newRequest = this.changeRequestUrl(request);
       return next.handle(newRequest);
     } else {

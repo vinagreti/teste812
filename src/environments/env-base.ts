@@ -5,7 +5,7 @@ export interface AppEnvironment {
   basePath: string;
   debug: boolean;
   defaultLanguage: AppLanguage;
-  enabledLanguages: AppLanguage[];
+  extraLanguages: AppLanguage[];
   name: string;
   production: boolean;
   serverPort: number;
@@ -17,7 +17,7 @@ export const EnvBaseConfig: AppEnvironment = {
   basePath: '',
   debug: false,
   defaultLanguage: AppLanguage.EN,
-  enabledLanguages: [AppLanguage.EN],
+  extraLanguages: [],
   name: 'BaseEnvironment',
   serverPort: 4200,
   production: false,

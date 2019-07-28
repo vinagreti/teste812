@@ -18,7 +18,7 @@ export const environment: AppEnvironment = {
   basePath: '',
   debug: true,
   defaultLanguage: AppLanguage.EN,
-  enabledLanguages: [AppLanguage.EN, AppLanguage.PT],
+  extraLanguages: [AppLanguage.ES, AppLanguage.PT],
   name: 'development',
   serverPort: 4200,
   production: false,

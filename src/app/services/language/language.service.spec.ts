@@ -67,4 +67,38 @@ describe('LanguageService', () => {
       done();
     });
   });
+
+  it('should get language from url if valid', () => {
+    const service: any = TestBed.get(LanguageService);
+    service.location = {path: () => '/en/home'};
+    const urlLanguage = service.getStartupLanguage();
+    expect(urlLanguage).toEqual('en');
+  });
+
+  it('should not get language from url if invalid', () => {
+    const service: any = TestBed.get(LanguageService);
+    service.location = {path: () => '/xyz-invalid/home'};
+    const urlLanguage = service.detectLanguageInUrl();
+    expect(urlLanguage).toBeUndefined();
+  });
+
+  it('should get language from url if default', () => {
+    pending();
+  });
+
+  it('should get language from url if not default', () => {
+    pending();
+  });
+
+  it('should set language in the url if not the default', () => {
+    pending();
+  });
+
+  it(`should set naked language in url if default (default doesn't need to be explicit)`, () => {
+    pending();
+  });
+
+  it(`should not navigate if language is not set on environment.extraLanguages`, () => {
+    pending();
+  });
 });

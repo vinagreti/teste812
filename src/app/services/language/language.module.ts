@@ -1,5 +1,7 @@
+import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { environment } from '@env/environment';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -20,10 +22,13 @@ export function HttpLoaderFactory(http: HttpClient) {
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       },
-    })
+    }),
+    RouterModule,
   ],
   providers: [
-    LanguageService
+    LanguageService,
+    Location,
+    {provide: LocationStrategy, useClass: PathLocationStrategy},
   ],
 })
 export class LanguageModule {
