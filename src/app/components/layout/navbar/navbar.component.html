@@ -2,7 +2,10 @@
   <a [routerLink]="['/']" routerLinkActive=""><h1> {{ 'app.title' | translate }} </h1></a>
   <span class="center-space"></span>
   <span *ngIf="(lang$ | async) as lang">
-    <button mat-flat-button [color]="lang === languages.EN ? 'primary' : 'default'" (click)="lang === languages.EN ? false : setLanguage(languages.EN)">EN</button>
-    <button mat-flat-button [color]="lang === languages.PT ? 'primary' : 'default'" (click)="lang === languages.PT ? false : setLanguage(languages.PT)">PT</button>
+    <ng-container *ngIf="enabledLanguages.length > 1">
+      <ng-container *ngFor="let enabledLanguage of enabledLanguages">
+        <button mat-flat-button [color]="lang === enabledLanguage ? 'primary' : 'default'" (click)="lang === enabledLanguage ? false : setLanguage(enabledLanguage)">{{enabledLanguage}}</button>
+      </ng-container>
+    </ng-container>
   </span>
 </mat-toolbar>
