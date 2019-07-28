@@ -1,6 +1,5 @@
 import { AppLanguage } from '@models/language';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { getStartupLanguage } from './functions';
 import { ASetLanguage } from './language.actions';
 
 export interface LanguageStateModel {
@@ -10,7 +9,7 @@ export interface LanguageStateModel {
 @State<LanguageStateModel>({
   name: 'language',
   defaults: {
-    language: getStartupLanguage()
+    language: AppLanguage.EN
   }
 })
 export class LanguageState {

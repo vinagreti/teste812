@@ -32,15 +32,39 @@ describe('LanguageService', () => {
     expect(service.language).toBeTruthy();
   });
 
-  it('should set language to PT', () => {
-    const service: LanguageService = TestBed.get(LanguageService);
-    service.language = AppLanguage.PT;
-    expect(service.language).toEqual(AppLanguage.PT);
+  it('should set language to PT', (done) => {
+    const service: any = TestBed.get(LanguageService);
+    service.setLanguageInStore(AppLanguage.PT).subscribe(res => {
+      expect(service.language).toEqual(AppLanguage.PT);
+      done();
+    });
   });
 
-  it('should set language to EN', () => {
-    const service: LanguageService = TestBed.get(LanguageService);
-    service.language = AppLanguage.EN;
-    expect(service.language).toEqual(AppLanguage.EN);
+  it('should set language to EN', (done) => {
+    const service: any = TestBed.get(LanguageService);
+    service.setLanguageInStore(AppLanguage.EN).subscribe(res => {
+      expect(service.language).toEqual(AppLanguage.EN);
+      done();
+    });
+  });
+
+  it('should fallback to browsers language if storage is not defined', (done) => {
+    const service: any = TestBed.get(LanguageService);
+    service.localeId = AppLanguage.EN;
+    service.setLanguageInStore(undefined).subscribe(res => {
+      const language = service.getStartupLanguage();
+      expect(language).toEqual(AppLanguage.EN);
+      done();
+    });
+  });
+
+  it('should fallback to default language if storage and browser language are not defined', (done) => {
+    const service: any = TestBed.get(LanguageService);
+    service.localeId = undefined;
+    service.setLanguageInStore(undefined).subscribe(res => {
+      const language = service.getStartupLanguage();
+      expect(language).toEqual(AppLanguage.EN);
+      done();
+    });
   });
 });

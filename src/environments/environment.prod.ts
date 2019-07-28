@@ -1,4 +1,4 @@
-import { AppLanguage } from '@models/language';
+import { AppLanguage } from './../app/models/language';
 import { AppEnvironment } from './env-base';
 
 export const environment: AppEnvironment = {
@@ -7,5 +7,6 @@ export const environment: AppEnvironment = {
   debug: false,
   defaultLanguage: AppLanguage.EN,
   enabledLanguages: [AppLanguage.EN],
+  serverPort: 80,
   production: true,
 };

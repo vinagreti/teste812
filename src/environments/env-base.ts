@@ -1,4 +1,4 @@
-import { AppLanguage } from '@models/language';
+import { AppLanguage } from './../app/models/language';
 
 export interface AppEnvironment {
   appName: string;
@@ -7,6 +7,7 @@ export interface AppEnvironment {
   defaultLanguage: AppLanguage;
   enabledLanguages: AppLanguage[];
   production: boolean;
+  serverPort: number;
   [key: string]: any;
 }
 
@@ -16,5 +17,6 @@ export const EnvBaseConfig: AppEnvironment = {
   debug: false,
   defaultLanguage: AppLanguage.EN,
   enabledLanguages: [AppLanguage.EN],
+  serverPort: 4200,
   production: false,
 };

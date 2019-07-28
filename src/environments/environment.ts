@@ -1,4 +1,3 @@
-import { AppLanguage } from '@models/language';
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
@@ -7,6 +6,7 @@ import { AppLanguage } from '@models/language';
  * on performance if an error is thrown.
  */
 import 'zone.js/dist/zone-error'; // Included with Angular CLI.import { AppLanguage } from '@models/language';
+import { AppLanguage } from './../app/models/language';
 import { AppEnvironment } from './env-base';
 
 // This file can be replaced during build by using the `fileReplacements` array.
@@ -19,6 +19,7 @@ export const environment: AppEnvironment = {
   debug: true,
   defaultLanguage: AppLanguage.EN,
   enabledLanguages: [AppLanguage.EN],
+  serverPort: 4200,
   production: false,
 };
 

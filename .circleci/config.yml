@@ -36,5 +36,8 @@ jobs:
       # run tests!
       - run: npm test
 
-      # run build!
+      # run build App
       - run: npm run build
+
+      # run build Server Side Rederer
+      - run: npm run build:ssr

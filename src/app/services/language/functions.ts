@@ -1,6 +1,6 @@
 import { AppLanguage } from '@models/language';
 
-export function getGenericLanguage(lang: AppLanguage): AppLanguage {
+export function getAppGenericLanguageFromLocale(lang: string): AppLanguage {
   if (lang) {
     if (lang.length > 1) {
       return lang.substr(0, 2) as AppLanguage;
@@ -12,22 +12,16 @@ export function getGenericLanguage(lang: AppLanguage): AppLanguage {
   }
 }
 
-export function isValidLanguage(lang: AppLanguage) {
+export function isLanguageUsedByThisApp(lang: string) {
   return Object.values(AppLanguage).includes(lang);
 }
 
-export function getValidLanguage(lang: AppLanguage): AppLanguage {
-  const genericLanguage = getGenericLanguage(lang);
-  const languageIsValid = isValidLanguage(genericLanguage);
+export function getAppGenericaLanguage(lang: string): AppLanguage {
+  const genericLanguage = getAppGenericLanguageFromLocale(lang);
+  const languageIsValid = isLanguageUsedByThisApp(genericLanguage);
   if (languageIsValid) {
     return genericLanguage;
   } else {
     return undefined;
   }
-}
-
-export function getStartupLanguage(): AppLanguage {
-  const browserLanguage = navigator.language || (navigator as any).userLanguage;
-  const validBrowserLanguage = getValidLanguage(browserLanguage);
-  return validBrowserLanguage || AppLanguage.PT;
 }
