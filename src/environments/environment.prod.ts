@@ -6,7 +6,8 @@ export const environment: AppEnvironment = {
   basePath: '',
   debug: false,
   defaultLanguage: AppLanguage.EN,
-  enabledLanguages: [AppLanguage.EN],
+  enabledLanguages: [AppLanguage.EN, AppLanguage.PT],
+  name: 'production',
   serverPort: 80,
   production: true,
 };

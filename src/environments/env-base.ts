@@ -6,6 +6,7 @@ export interface AppEnvironment {
   debug: boolean;
   defaultLanguage: AppLanguage;
   enabledLanguages: AppLanguage[];
+  name: string;
   production: boolean;
   serverPort: number;
   [key: string]: any;
@@ -17,6 +18,7 @@ export const EnvBaseConfig: AppEnvironment = {
   debug: false,
   defaultLanguage: AppLanguage.EN,
   enabledLanguages: [AppLanguage.EN],
+  name: 'BaseEnvironment',
   serverPort: 4200,
   production: false,
 };
