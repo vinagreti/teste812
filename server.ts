@@ -17,19 +17,25 @@
 
 import { REQUEST } from '@nguniversal/express-engine/tokens';
 import * as express from 'express';
-import { join } from 'path';
 import 'zone.js/dist/zone-node';
 import { environment } from './src/environments/environment.prod';
-
+const mime = require('mime-types');
+const path = require('path');
+const compression = require('compression');
 
 // Express server
 const app = express();
 
 const PORT = process.env.PORT || environment.serverPort;
-const DIST_FOLDER = join(process.cwd(), 'dist/browser');
+const DIST_FOLDER = path.join(process.cwd(), 'dist/browser');
 
 // * NOTE :: leave this as require() since this file is built Dynamically from webpack
 const {AppServerModuleNgFactory, LAZY_MODULE_MAP, ngExpressEngine, provideModuleMap} = require('./dist/server/main');
+
+/* COMPRESSION
+ * compress the files before sending to browser
+ */
+app.use(compression());
 
 // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
 app.engine('html', ngExpressEngine({
@@ -46,11 +52,17 @@ app.set('views', DIST_FOLDER);
 // app.get('/api/**', (req, res) => { });
 // Serve static files from /browser
 app.get('*.*', express.static(DIST_FOLDER, {
-  maxAge: '1y'
+  maxAge: '1y',
+  setHeaders: (res, requestPath: string) => {
+    if (['text/html', 'application/json'].includes(mime.lookup(requestPath))) {
+      res.setHeader('Cache-Control', 'public, max-age=0, no-cache, no-store');
+    }
+  }
 }));
 
 // All regular routes use the Universal engine
 app.get('*', (req: express.Request, res: express.Response) => {
+  res.setHeader('Cache-Control', 'public, max-age=0, no-cache, no-store');
   res.render('index', {
     req,
     providers: [
