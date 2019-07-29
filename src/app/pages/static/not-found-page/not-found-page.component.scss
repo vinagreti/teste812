@@ -1,0 +1,10 @@
+@import '@styles/colors';
+
+h1, .not-found-page-icon {
+  color: $app-color-warn;
+  text-align: center;
+}
+
+.not-found-page-icon {
+  font-size: 64px;
+}
