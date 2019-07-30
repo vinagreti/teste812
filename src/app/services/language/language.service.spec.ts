@@ -1,16 +1,21 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AppLanguage } from '@models/language';
+import { environment } from '@env/environment';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from './language.module';
 import { LanguageService } from './language.service';
 import { LanguageServiceTestingModule } from './testing';
 
-
 describe('LanguageService', () => {
+
+  const defaultLanguage = environment.defaultLanguage;
+  const extraLanguage = environment.extraLanguages[0];
+
   beforeEach(() => TestBed.configureTestingModule({
     imports: [
       LanguageServiceTestingModule,
+      HttpClientTestingModule,
       TranslateModule.forRoot({
         loader: {
           provide: TranslateLoader,
@@ -18,87 +23,96 @@ describe('LanguageService', () => {
           deps: [HttpClient]
         },
       }),
-      HttpClientModule,
     ]
   }));
 
   it('should be created', () => {
+    // given
     const service: LanguageService = TestBed.get(LanguageService);
+    // then
     expect(service).toBeTruthy();
   });
 
   it('should get language', () => {
+    // given
     const service: LanguageService = TestBed.get(LanguageService);
-    expect(service.language).toBeTruthy();
+    // when
+    const language = service.language;
+    // then
+    expect(language).toBeTruthy();
   });
 
-  it('should set language to PT', (done) => {
-    const service: any = TestBed.get(LanguageService);
-    service.setLanguageInStore(AppLanguage.PT).subscribe(res => {
-      expect(service.language).toEqual(AppLanguage.PT);
+  it('should set language', (done) => {
+    // given
+    const service: LanguageService = TestBed.get(LanguageService);
+    // when
+    const changeRespose = service.setLanguage(extraLanguage);
+    // then
+    changeRespose.subscribe(() => {
+      const language = service.language;
+      expect(language).toEqual(extraLanguage);
       done();
     });
   });
 
-  it('should set language to EN', (done) => {
+  it('should set language and persist in url', (done) => {
+    // given
     const service: any = TestBed.get(LanguageService);
-    service.setLanguageInStore(AppLanguage.EN).subscribe(res => {
-      expect(service.language).toEqual(AppLanguage.EN);
+    // when
+    service.location = {path: () => '/home/two/three'};
+    const changeRespose = service.setLanguage(extraLanguage);
+    // then
+    changeRespose.subscribe(() => {
+      const language = service.language;
+      expect(language).toEqual(extraLanguage);
       done();
     });
   });
 
-  it('should fallback to browsers language if storage is not defined', (done) => {
+  it('should override language in url', (done) => {
+    // given
     const service: any = TestBed.get(LanguageService);
-    service.localeId = AppLanguage.EN;
-    service.setLanguageInStore(undefined).subscribe(res => {
-      const language = service.getStartupLanguage();
-      expect(language).toEqual(AppLanguage.EN);
+    // when
+    service.location = {path: () => `/${defaultLanguage}/two/three`};
+    const changeRespose = service.setLanguage(extraLanguage);
+    // then
+    changeRespose.subscribe(() => {
+      const newPath = service.mountI18nPath(extraLanguage);
+      expect(newPath).toEqual(`/${extraLanguage}/two/three`);
       done();
     });
   });
 
-  it('should fallback to default language if storage and browser language are not defined', (done) => {
+  it('should set language in url when setLanguage is called', () => {
+    // given
     const service: any = TestBed.get(LanguageService);
-    service.localeId = undefined;
-    service.setLanguageInStore(undefined).subscribe(res => {
-      const language = service.getStartupLanguage();
-      expect(language).toEqual(AppLanguage.EN);
-      done();
-    });
+    // when
+    const navigated = spyOn(service.ngZone, 'run').and.callThrough();
+    service.setLanguage(extraLanguage);
+    // then
+    expect(navigated).toHaveBeenCalled();
   });
 
-  it('should get language from url if valid', () => {
+  it('should not set language in url when setLanguage is called with same language', () => {
+    // given
     const service: any = TestBed.get(LanguageService);
-    service.location = {path: () => '/en/home'};
-    const urlLanguage = service.getStartupLanguage();
-    expect(urlLanguage).toEqual('en');
+    // when
+    const navigated = spyOn(service.ngZone, 'run').and.callThrough();
+    service.setLanguage(extraLanguage);
+    service.setLanguage(extraLanguage);
+    // then
+    expect(navigated).toHaveBeenCalledTimes(1);
   });
 
-  it('should not get language from url if invalid', () => {
+  it('should set language in url when setLanguage is called different same language', () => {
+    // given
     const service: any = TestBed.get(LanguageService);
-    service.location = {path: () => '/xyz-invalid/home'};
-    const urlLanguage = service.detectLanguageInUrl();
-    expect(urlLanguage).toBeUndefined();
+    // when
+    const navigated = spyOn(service.ngZone, 'run').and.callThrough();
+    service.setLanguage(extraLanguage);
+    service.setLanguage(defaultLanguage);
+    // then
+    expect(navigated).toHaveBeenCalledTimes(2);
   });
 
-  it('should get language from url if default', () => {
-    pending();
-  });
-
-  it('should get language from url if not default', () => {
-    pending();
-  });
-
-  it('should set language in the url if not the default', () => {
-    pending();
-  });
-
-  it(`should set naked language in url if default (default doesn't need to be explicit)`, () => {
-    pending();
-  });
-
-  it(`should not navigate if language is not set on environment.extraLanguages`, () => {
-    pending();
-  });
 });

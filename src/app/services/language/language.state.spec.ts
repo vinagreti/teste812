@@ -1,12 +1,12 @@
 import { async, TestBed } from '@angular/core/testing';
-import { AppLanguage } from '@models/language';
+import { I18nLocale } from '@models/language';
 import { Store } from '@ngxs/store';
 import { ASetLanguage } from './language.actions';
 import { LanguageState, LanguageStateModel } from './language.state';
 import { LanguageServiceTestingModule } from './testing';
 
 describe('Language store', () => {
-  const newLanguage = AppLanguage.PT;
+  const newLanguage = I18nLocale.PT;
 
   let store: Store;
 

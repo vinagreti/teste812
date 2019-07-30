@@ -109,7 +109,13 @@
                 "src/app/sass"
               ]
             },
-            "scripts": []
+            "scripts": [],
+            "fileReplacements": [
+              {
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.testing.ts"
+              }
+            ],
           }
         },
         "lint": {

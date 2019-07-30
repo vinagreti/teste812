@@ -1,1 +1,16 @@
 <h1>{{ 'app.title' | translate }}</h1>
+
+<p>Today --: {{ today | date: 'short'}}</p>
+<p>Today en: {{ today | date: 'short' : '' : 'en'}}</p>
+<p>Today es: {{ today | date: 'short' : '' : 'es'}}</p>
+<p>Today pt: {{ today | date: 'short' : '' : 'pt'}}</p>
+
+<div>
+  <button (click)="useLanguage('pt')">PT</button>
+  <button (click)="useLanguage('en')">EN</button>
+  <button (click)="useLanguage('es')">ES</button>
+</div>
+
+<a [routerLink]="['/home']">Home</a>
+<br>
+<a [routerLink]="['/home2']">Home 2</a>

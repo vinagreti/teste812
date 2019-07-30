@@ -1,15 +1,15 @@
-import { AppLanguage } from '@models/language';
+import { I18nLocale } from '@models/language';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { ASetLanguage } from './language.actions';
 
 export interface LanguageStateModel {
-  language: AppLanguage;
+  language: I18nLocale;
 }
 
 @State<LanguageStateModel>({
   name: 'language',
   defaults: {
-    language: AppLanguage.EN
+    language: undefined
   }
 })
 export class LanguageState {

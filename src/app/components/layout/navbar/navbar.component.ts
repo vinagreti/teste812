@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from '@env/environment';
-import { AppLanguage } from '@models/language';
+import { I18nLocale } from '@models/language';
 import { LanguageService } from '@services/language';
 import { Observable } from 'rxjs';
 
@@ -11,22 +11,22 @@ import { Observable } from 'rxjs';
 })
 export class NavbarComponent implements OnInit {
 
-  appLanguages = [environment.defaultLanguage, ...environment.extraLanguages];
+  i18nLocales = [environment.defaultLanguage, ...environment.extraLanguages];
 
-  lang$: Observable<AppLanguage>;
+  language$: Observable<I18nLocale>;
 
-  languages = AppLanguage;
+  languages = I18nLocale;
 
   constructor(
     private languageService: LanguageService,
   ) { }
 
   ngOnInit() {
-    this.lang$ = this.languageService.lang$;
+    this.language$ = this.languageService.language$;
   }
 
-  setLanguage(lang: AppLanguage) {
-    this.languageService.language = lang;
+  setLanguage(lang: I18nLocale) {
+    return this.languageService.setLanguage(lang);
   }
 
 }

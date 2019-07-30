@@ -1,12 +1,13 @@
 import { Location } from '@angular/common';
-import { Inject, Injectable, LOCALE_ID, NgZone, Output } from '@angular/core';
-import { Router } from '@angular/router';
-import { environment } from '@env/environment';
-import { AppLanguage } from '@models/language';
+import { Injectable, NgZone } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { I18nLocale } from '@models/language';
 import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ReplaySubject } from 'rxjs';
-import { getAppGenericaLanguage, isLanguageUsedByThisApp } from './functions';
+import { Select, Store } from '@ngxs/store';
+import { Observable, of } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { isLanguageUsedByThisApp } from './functions';
+import { LanguageInitializerService } from './language-initializer.service';
 import { ASetLanguage } from './language.actions';
 import { LanguageState } from './language.state';
 
@@ -15,120 +16,92 @@ import { LanguageState } from './language.state';
 })
 export class LanguageService {
 
-  @Output() lang$: ReplaySubject<AppLanguage> = new ReplaySubject(undefined);
+  @Select(LanguageState.language) language$: Observable<I18nLocale>;
 
   constructor(
-    private translate: TranslateService,
-    private store: Store,
+    private languageInitializer: LanguageInitializerService,
     private location: Location,
     private router: Router,
+    private store: Store,
+    private translateService: TranslateService,
     private ngZone: NgZone,
-    @Inject(LOCALE_ID) private localeId: string,
   ) {
-    this.initService();
-    this.detectLanguageInUrl();
-  }
-
-  set language(lang: AppLanguage) {
-    this.setLanguageInStore(lang).toPromise().then(() => {
-      this.lang$.next(lang);
-      this.translate.use(lang);
-      this.setLanguageInUrl(lang);
-    });
+    this.languageInitializer.initLanguageService();
+    this.appendRouterEventHanler();
   }
 
   get language() {
-    return this.getStoreLanguage();
+    return this.getStoredLanguage();
   }
 
-  private setLanguageInStore(lang: AppLanguage) {
-    return this.store.dispatch(new ASetLanguage(lang));
-  }
-
-  private initService() {
-    this.language = this.getStartupLanguage();
-  }
-
-  private getStartupLanguage() {
-    const urlLanguage = this.detectLanguageInUrl();
-    if (urlLanguage) {
-      return urlLanguage;
+  setLanguage(language: I18nLocale) {
+    if (language !== this.language) {
+      this.setNewLanguage(language);
+      return this.setStoreLanguage(language);
     } else {
-      const storeLanguage = this.getStoreLanguage();
-      if (storeLanguage && isLanguageUsedByThisApp(storeLanguage)) {
-        return storeLanguage;
-      } else {
-        const browserLanguage = getAppGenericaLanguage(this.localeId);
-        if (browserLanguage) {
-          return browserLanguage;
-        } else {
-          return environment.defaultLanguage;
-        }
-      }
+      return this.returnStoreObservable();
     }
   }
 
-  private detectLanguageInUrl() {
-    const languageInUrl = this.extractAppLanguageFromUrl(this.location.path());
-    if (languageInUrl) {
-      return languageInUrl;
-    } else {
-      return undefined;
-    }
+  private returnStoreObservable() {
+    const storeState = this.getStoredState();
+    return of(storeState);
   }
 
-  private getStoreLanguage() {
+  private setNewLanguage(language: I18nLocale) {
+    this.translateService.use(language);
+    this.addLanguageToUrl(language);
+  }
+
+  private setStoreLanguage(language: I18nLocale) {
+    return this.store.dispatch(new ASetLanguage(language));
+  }
+
+  private getStoredState() {
+    return this.store.selectSnapshot(LanguageState);
+  }
+
+  private getStoredLanguage() {
     return this.store.selectSnapshot(LanguageState.language);
   }
 
-  private extractAppLanguageFromUrl(url: string) {
-    const pathSlices = url.split('/').filter(slice => !!slice);
-    if (pathSlices.length) {
-      const languageInUrl =  pathSlices[0] as AppLanguage;
-      const isLanguageInUrlValid = isLanguageUsedByThisApp(languageInUrl);
-      if (isLanguageInUrlValid) {
-        return languageInUrl;
-      } else {
-        return '';
+  private appendRouterEventHanler() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+    ).subscribe(navigated => {
+      this.addLanguageToUrl(this.language);
+    });
+  }
+
+  private mountI18nPath(language: I18nLocale) {
+    const urlLanguage = this.getUrlLanguage();
+    const isUsedByTheApp = isLanguageUsedByThisApp(urlLanguage as I18nLocale);
+    const paths = this.location.path().split('/').splice(1);
+
+    if (isUsedByTheApp) {
+      const locationWithoutLanguage = paths.slice(1).join('/');
+      if (locationWithoutLanguage) {
+        language = `/${language}/${locationWithoutLanguage}` as I18nLocale;
       }
     } else {
-      return '';
+      const locationWithoutLanguage = `${paths.join('/')}`;
+      if (locationWithoutLanguage) {
+        language = `/${language}/${locationWithoutLanguage}` as I18nLocale;
+      }
     }
+    return language;
   }
 
-  private setLanguageInUrl(language: AppLanguage) {
-    const isLanguageDefault = language === environment.defaultLanguage;
-    if (isLanguageDefault) {
-      this.setUrl('');
-    } else {
-      this.setUrl(language);
-    }
-  }
-
-  private setUrl(language: string) {
-    const newPath = this.setLanguageInLocationPath(this.location.path(), language);
-    this.runInNgZone(newPath);
+  private getUrlLanguage() {
+    return this.location.path().split('/').splice(1)[0];
   }
 
   // avoids "Navigation triggered outside Angular zone" warning in unit tests
   // https://github.com/angular/angular/issues/25837
-  private runInNgZone(newPath: string) {
+  private addLanguageToUrl(language: I18nLocale) {;
+    const newPath = this.mountI18nPath(language);
     this.ngZone.run(() => {
       this.router.navigate([newPath], { replaceUrl: true, queryParamsHandling: 'preserve' });
     });
   }
-
-  private setLanguageInLocationPath(locationPath, languagePath: string) {
-    const languageInUrl = this.extractAppLanguageFromUrl(locationPath);
-    if (languageInUrl) {
-      const finalPath = locationPath.replace(languageInUrl, languagePath);
-      return finalPath;
-    } else if (languagePath) {
-      const finalPath = `/${languagePath}${locationPath}`;
-      return finalPath;
-    } else {
-      return locationPath;
-    }
-  }
-
 }

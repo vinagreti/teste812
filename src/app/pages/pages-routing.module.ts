@@ -6,6 +6,7 @@ import { AppWrapperDefaultComponent, AppWrapperDefaultModule } from '@components
 const pagesRoutes: Routes = [
   { path: '', loadChildren: () =>  import('./home/home.module').then(mod => mod.HomeModule) },
   { path: 'home', loadChildren: () =>  import('./home/home.module').then(mod => mod.HomeModule) },
+  { path: 'home2', loadChildren: () =>  import('./home/home.module').then(mod => mod.HomeModule) },
 ];
 
 // !!!: Do no change the translatedRoutes unless you are sure you know what you are doing

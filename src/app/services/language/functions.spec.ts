@@ -1,40 +1,20 @@
-import { environment } from '@env/environment';
-import { AppLanguage } from '@models/language';
+import { I18nLocale } from '@models/language';
 import { getAppGenericaLanguage, isLanguageUsedByThisApp } from './functions';
 
 describe('LanguageFunctions', () => {
-  const invalidLanguage = 'xyzabc';
-  const extraLanguages = ['pt' as AppLanguage];
-  const defaultLanguage = 'en' as AppLanguage;
-  let defaultLanguageBkp: AppLanguage;
-  let extraLanguagesBkp: AppLanguage[];
+  const invalidLanguage = '!';
 
-  beforeAll(() => {
-    // backup
-    defaultLanguageBkp = environment.defaultLanguage;
-    extraLanguagesBkp = [...environment.extraLanguages];
-    // modify
-    environment.extraLanguages = extraLanguages;
-    environment.defaultLanguage = defaultLanguage;
-  });
-
-  afterAll(() => {
-    // restore
-    environment.extraLanguages = extraLanguagesBkp;
-    environment.defaultLanguage = defaultLanguageBkp;
-  });
-
-  it(`should get ${AppLanguage.PT} if language is pt-BR`, () => {
+  it(`should get generic ${I18nLocale.PT} if language is ${I18nLocale.PT}-xxx`, () => {
     // given
-    const languagePtBr = 'pt-BR';
+    const languagePtBr = `${I18nLocale.PT}-xxx`;
     // when
     const language = getAppGenericaLanguage(languagePtBr);
     // then
-    expect(language).toEqual(AppLanguage.PT);
+    expect(language).toEqual(I18nLocale.PT);
   });
 
   it('should get undefined if language has length 1', () => {
-    const language = getAppGenericaLanguage('!');
+    const language = getAppGenericaLanguage(invalidLanguage);
     expect(language).toBeUndefined();
   });
 
@@ -43,9 +23,9 @@ describe('LanguageFunctions', () => {
     expect(language).toBeUndefined();
   });
 
-  it('isLanguageUsedByThisApp: should get undefined if language is not defined on environment.extraLanguages', () => {
+  it('should get undefined if language is not defined on environment.extraLanguages', () => {
     // given
-    const test = invalidLanguage;
+    const test = invalidLanguage as I18nLocale;
     // when
     const language = isLanguageUsedByThisApp(test);
     // then

@@ -1,6 +1,6 @@
-import { AppLanguage } from '@models/language';
+import { I18nLocale } from '@models/language';
 
 export class ASetLanguage {
   public static readonly type = '[Language] Set language';
-  constructor(public language: AppLanguage) { }
+  constructor(public language: I18nLocale) { }
 }

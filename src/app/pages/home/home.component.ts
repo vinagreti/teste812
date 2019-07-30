@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { DateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'app-home',
@@ -8,6 +9,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 })
 export class HomeComponent {
 
-  constructor() {}
+  today = Date.now();
+
+  constructor(
+    private dateAdapter: DateAdapter<Date>
+  ) {}
+
+  useLanguage(language: string): void {
+    this.dateAdapter.setLocale(language);
+  }
 
 }

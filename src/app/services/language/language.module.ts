@@ -1,10 +1,10 @@
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { environment } from '@env/environment';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { LanguageInitializerModule } from './language-initializer.module';
 import { LanguageService } from './language.service';
 
 export const GLOBAL_TRANSLATION_PATH = `${environment.basePath}/assets/i18n/location.`;
@@ -16,6 +16,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   imports: [
     HttpClientModule,
+    LanguageInitializerModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -23,7 +24,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient]
       },
     }),
-    RouterModule,
   ],
   providers: [
     LanguageService,

@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AppLanguage } from '@models/language';
+import { I18nLocale } from '@models/language';
 import { BehaviorSubject } from 'rxjs';
-import { skip } from 'rxjs/operators';
 import { NavbarComponent } from './navbar.component';
 import { NavbarTestingModule } from './testing/navbar-testing.module';
 
@@ -34,28 +33,28 @@ describe('NavbarComponent', () => {
   });
 
   it('should set language to PT', (done) => {
-    component.setLanguage(AppLanguage.PT);
-    component.lang$
-    .pipe(skip(1)) // ignore the initial value
-    .subscribe(language => {
-      expect(language).toEqual(AppLanguage.PT);
-      done();
+    component.setLanguage(I18nLocale.PT).subscribe(() => {
+      component.language$
+      .subscribe(language => {
+        expect(language).toEqual(I18nLocale.PT);
+        done();
+      });
     });
   });
 
   it('should set language to EN', (done) => {
-    component.lang$
-    .pipe(skip(1)) // ignore the initial value
-    .subscribe(language => {
-      expect(language).toEqual(AppLanguage.EN);
-      done();
+    component.setLanguage(I18nLocale.EN).subscribe(() => {
+      component.language$
+      .subscribe(language => {
+        expect(language).toEqual(I18nLocale.EN);
+        done();
+      });
     });
-    component.setLanguage(AppLanguage.EN);
   });
 
   it('should render the change language buttons', () => {
     const compiled = fixture.debugElement.nativeElement;
-    component.lang$ = new BehaviorSubject(AppLanguage.PT);
+    component.language$ = new BehaviorSubject(I18nLocale.PT);
     fixture.detectChanges();
     expect(compiled.querySelector('button')).toBeTruthy();
   });
