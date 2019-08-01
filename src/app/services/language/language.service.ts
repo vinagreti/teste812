@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
 import { Injectable, NgZone } from '@angular/core';
+import { DateAdapter } from '@angular/material/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { I18nLocale } from '@models/language';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +20,7 @@ export class LanguageService {
   @Select(LanguageState.language) language$: Observable<I18nLocale>;
 
   constructor(
+    private dateAdapter: DateAdapter<Date>,
     private languageInitializer: LanguageInitializerService,
     private location: Location,
     private router: Router,
@@ -26,6 +28,9 @@ export class LanguageService {
     private translateService: TranslateService,
     private ngZone: NgZone,
   ) {
+    this.dateAdapter.localeChanges.subscribe(res => {
+      console.log(`LOCALTION CHANGED`);
+    })
     this.languageInitializer.initLanguageService();
     this.appendRouterEventHanler();
   }
@@ -49,6 +54,7 @@ export class LanguageService {
   }
 
   private setNewLanguage(language: I18nLocale) {
+    this.dateAdapter.setLocale(language);
     this.translateService.use(language);
     this.addLanguageToUrl(language);
   }

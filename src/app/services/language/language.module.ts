@@ -1,9 +1,11 @@
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { LOCALE_ID, NgModule, Optional, SkipSelf } from '@angular/core';
+import { NativeDateModule } from '@angular/material/core';
 import { environment } from '@env/environment';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { AppLanguageLocaleInitializer } from './functions';
 import { LanguageInitializerModule } from './language-initializer.module';
 import { LanguageService } from './language.service';
 
@@ -24,8 +26,11 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient]
       },
     }),
+    NativeDateModule,
   ],
   providers: [
+    AppLanguageLocaleInitializer,
+    { provide: LOCALE_ID, useValue: environment.defaultLanguage },
     LanguageService,
     Location,
     {provide: LocationStrategy, useClass: PathLocationStrategy},

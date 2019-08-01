@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DateAdapter } from '@angular/material/core';
+import { I18nLocale } from '@models/language';
+import { LanguageService } from '@services/language';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -11,12 +13,12 @@ export class HomeComponent {
 
   today = Date.now();
 
-  constructor(
-    private dateAdapter: DateAdapter<Date>
-  ) {}
+  language$: Observable<I18nLocale>;
 
-  useLanguage(language: string): void {
-    this.dateAdapter.setLocale(language);
+  constructor(
+    private languaService: LanguageService,
+  ) {
+    this.language$ = this.languaService.language$;
   }
 
 }

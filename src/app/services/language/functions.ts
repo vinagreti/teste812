@@ -1,3 +1,5 @@
+import { registerLocaleData } from '@angular/common';
+import { APP_INITIALIZER } from '@angular/core';
 import { environment } from '@env/environment';
 import { I18nLocale } from '@models/language';
 
@@ -26,3 +28,31 @@ export function getAppGenericaLanguage(lang: string): I18nLocale {
     return undefined;
   }
 }
+
+function importAppLanguagesLocales(languages: I18nLocale[]) {
+  return new Promise((resolve, reject) => {
+    const language = languages.shift();
+    import(`@angular/common/locales/${language}.js`).then(locale => {
+      import(`@angular/common/locales/extra/${language}.js`).then(extras => {
+        registerLocaleData(locale.default, language, extras.default);
+        if (languages.length) {
+          importAppLanguagesLocales(languages).then(() => resolve());
+        } else {
+          resolve();
+        }
+      });
+    });
+  });
+}
+
+export const AppLanguageLocaleInitializer = {
+  provide: APP_INITIALIZER,
+  useFactory: () => {
+    return () => {
+      const enabledLanguages = [environment.defaultLanguage, ...environment.extraLanguages];
+      return importAppLanguagesLocales(enabledLanguages);
+    };
+  },
+  deps: [],
+  multi: true,
+};
