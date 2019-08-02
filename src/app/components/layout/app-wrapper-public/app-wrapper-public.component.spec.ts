@@ -1,38 +1,33 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { HomeComponent } from './home.component';
+import { NavbarTestingModule } from '../navbar/testing/navbar-testing.module';
+import { AppWrapperPublicComponent } from './app-wrapper-public.component';
 
 
-describe('HomeComponent', () => {
-  let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
+describe('AppWrapperPublicComponent', () => {
+  let component: AppWrapperPublicComponent;
+  let fixture: ComponentFixture<AppWrapperPublicComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HomeComponent ],
+      declarations: [ AppWrapperPublicComponent ],
       imports: [
         RouterTestingModule,
-        MatButtonToggleModule,
+        NavbarTestingModule,
         TranslateModule.forRoot(),
-      ]
+      ],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HomeComponent);
+    fixture = TestBed.createComponent(AppWrapperPublicComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should render title in a h1 tag', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1')).toBeTruthy();
   });
 });

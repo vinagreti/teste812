@@ -1,10 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { environment } from '@env/environment';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageInitializerService } from './language-initializer.service';
 import { LanguageInitializerServiceTestingModule } from './testing/language-initializer-testing.module';
-
 
 describe('LanguageInitializerService', () => {
 
@@ -15,6 +15,7 @@ describe('LanguageInitializerService', () => {
       LanguageInitializerServiceTestingModule,
       HttpClientTestingModule,
       TranslateModule.forRoot(),
+      RouterTestingModule,
     ]
   }));
 
@@ -70,17 +71,6 @@ describe('LanguageInitializerService', () => {
 
   describe('Url flow', () => {
 
-    it('should run url configuration flow', () => {
-      // given
-      const service: any = TestBed.get(LanguageInitializerService);
-      // when
-      service.location = {path: () => `/${extraLanguage}`};
-      const methodSpy = spyOn(service, 'runUrlConfiguratinoFlow').and.callThrough();
-      service.initLanguageService();
-      // then
-      expect(methodSpy).toHaveBeenCalled();
-    });
-
     it('should get language from url if valid', () => {
       // given
       const service: any = TestBed.get(LanguageInitializerService);
@@ -115,47 +105,16 @@ describe('LanguageInitializerService', () => {
 
   });
 
-  describe('Store flow', () => {
-
-    it('should run store configuration flow', (done) => {
-      // given
-      const service: any = TestBed.get(LanguageInitializerService);
-      // when
-      const methodSpy = spyOn(service, 'runStoreConfiguratinoFlow').and.callThrough();
-      // then
-      service.setStoreLanguage(extraLanguage).subscribe(() => {
-        service.initLanguageService();
-        expect(methodSpy).toHaveBeenCalled();
-        done();
-      });
-    });
-
-  });
-
-  describe('Browser flow', () => {
-
-    it('should run browser configuration flow', () => {
-      // given
-      const service: any = TestBed.get(LanguageInitializerService);
-      // when
-      const methodSpy = spyOn(service, 'runBrowserConfiguratinoFlow').and.callThrough();
-      // then
-      service.initLanguageService();
-      expect(methodSpy).toHaveBeenCalled();
-    });
-
-  });
-
   describe('Default flow', () => {
 
     it('should run browser configuration flow', () => {
       // given
       const service: any = TestBed.get(LanguageInitializerService);
       // when
-      service.localeId = undefined;
+      service.browserLocale = undefined;
       const methodSpy = spyOn(service, 'runDefaultConfiguratinoFlow').and.callThrough();
-      // then
       service.initLanguageService();
+      // then
       expect(methodSpy).toHaveBeenCalled();
     });
 

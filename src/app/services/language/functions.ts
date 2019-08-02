@@ -2,6 +2,7 @@ import { registerLocaleData } from '@angular/common';
 import { APP_INITIALIZER } from '@angular/core';
 import { environment } from '@env/environment';
 import { I18nLocale } from '@models/language';
+import { LanguageService } from './language.service';
 
 export function getAppGenericLanguageFromLocale(lang: string): I18nLocale {
   if (lang) {
@@ -29,14 +30,14 @@ export function getAppGenericaLanguage(lang: string): I18nLocale {
   }
 }
 
-function importAppLanguagesLocales(languages: I18nLocale[]) {
+function recursivelyRegisterLocales(languages: I18nLocale[]) {
   return new Promise((resolve, reject) => {
     const language = languages.shift();
     import(`@angular/common/locales/${language}.js`).then(locale => {
       import(`@angular/common/locales/extra/${language}.js`).then(extras => {
         registerLocaleData(locale.default, language, extras.default);
         if (languages.length) {
-          importAppLanguagesLocales(languages).then(() => resolve());
+          recursivelyRegisterLocales(languages).then(() => resolve());
         } else {
           resolve();
         }
@@ -45,14 +46,35 @@ function importAppLanguagesLocales(languages: I18nLocale[]) {
   });
 }
 
+export function importAppEnabledLanguagesLocales() {
+  const enabledLanguages = [environment.defaultLanguage, ...environment.extraLanguages];
+  return recursivelyRegisterLocales(enabledLanguages);
+}
+
 export const AppLanguageLocaleInitializer = {
   provide: APP_INITIALIZER,
   useFactory: () => {
     return () => {
-      const enabledLanguages = [environment.defaultLanguage, ...environment.extraLanguages];
-      return importAppLanguagesLocales(enabledLanguages);
+      return importAppEnabledLanguagesLocales();
     };
   },
   deps: [],
   multi: true,
 };
+
+export function getBrowserLocale() {
+  let browserLocale: string;
+  try {
+    const browserConfig = navigator as any;
+    if (browserConfig.languages && browserConfig.languages.length) {
+      browserLocale = browserConfig.languages[0];
+    } else {
+      browserLocale =  browserConfig.userLanguage || browserConfig.language || browserConfig.browserLanguage;
+    }
+  } catch { }
+  return browserLocale;
+}
+
+export function languageLocaleIdFactory(languageService: LanguageService) {
+  return languageService.language;
+}

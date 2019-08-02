@@ -33,13 +33,15 @@ describe('LanguageService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should get language', () => {
+  it('should get language', (done) => {
     // given
     const service: LanguageService = TestBed.get(LanguageService);
     // when
-    const language = service.language;
-    // then
-    expect(language).toBeTruthy();
+    service.language$.subscribe(language => {
+      // then
+      expect(language).toBeTruthy();
+      done();
+    })
   });
 
   it('should set language', (done) => {
@@ -55,64 +57,69 @@ describe('LanguageService', () => {
     });
   });
 
-  it('should set language and persist in url', (done) => {
+  it('should set language in url when setLanguage is called', (done) => {
     // given
     const service: any = TestBed.get(LanguageService);
     // when
-    service.location = {path: () => '/home/two/three'};
-    const changeRespose = service.setLanguage(extraLanguage);
-    // then
-    changeRespose.subscribe(() => {
-      const language = service.language;
-      expect(language).toEqual(extraLanguage);
+    const navigated = spyOn(service, 'replaceLanguageInUrl').and.callThrough();
+
+    service.setStoreLanguage(defaultLanguage).subscribe(() => {
+      service.setLanguage(extraLanguage);
+      // then
+      expect(navigated).toHaveBeenCalled();
       done();
     });
   });
 
-  it('should override language in url', (done) => {
+  it('should not set language in url when setLanguage is called with same language', (done) => {
     // given
     const service: any = TestBed.get(LanguageService);
     // when
-    service.location = {path: () => `/${defaultLanguage}/two/three`};
-    const changeRespose = service.setLanguage(extraLanguage);
-    // then
-    changeRespose.subscribe(() => {
-      const newPath = service.mountI18nPath(extraLanguage);
-      expect(newPath).toEqual(`/${extraLanguage}/two/three`);
+    const navigated = spyOn(service, 'replaceLanguageInUrl').and.callThrough();
+    service.setStoreLanguage(defaultLanguage).subscribe(() => {
+      service.setLanguage(extraLanguage);
+      service.setLanguage(extraLanguage);
+      // then
+      expect(navigated).toHaveBeenCalledTimes(1);
       done();
     });
   });
 
-  it('should set language in url when setLanguage is called', () => {
+  it('should set language in url when setLanguage is called different same language', (done) => {
     // given
     const service: any = TestBed.get(LanguageService);
     // when
-    const navigated = spyOn(service.ngZone, 'run').and.callThrough();
-    service.setLanguage(extraLanguage);
-    // then
-    expect(navigated).toHaveBeenCalled();
+    const navigated = spyOn(service, 'replaceLanguageInUrl').and.callThrough();
+    service.setStoreLanguage(defaultLanguage).subscribe(() => {
+      service.setLanguage(extraLanguage);
+      service.setLanguage(defaultLanguage);
+      // then
+      expect(navigated).toHaveBeenCalledTimes(2);
+      done();
+    });
   });
 
-  it('should not set language in url when setLanguage is called with same language', () => {
+  it('should change location.href as a fallback to missed window.history.pushState', () => {
     // given
     const service: any = TestBed.get(LanguageService);
     // when
-    const navigated = spyOn(service.ngZone, 'run').and.callThrough();
-    service.setLanguage(extraLanguage);
-    service.setLanguage(extraLanguage);
+    spyOn(service, 'pushHistoryState').and.throwError('');
+    const ieFallback = spyOn(service, 'changeLocationHref').and.stub();
+    service.replaceUrl('');
     // then
-    expect(navigated).toHaveBeenCalledTimes(1);
+    expect(ieFallback).toHaveBeenCalled();
   });
 
-  it('should set language in url when setLanguage is called different same language', () => {
+  it('should change location.href as a fallback to missed window.history.pushState', () => {
     // given
     const service: any = TestBed.get(LanguageService);
+    service.windowLocation = {assign: () => {}};
     // when
-    const navigated = spyOn(service.ngZone, 'run').and.callThrough();
-    service.setLanguage(extraLanguage);
-    service.setLanguage(defaultLanguage);
+    spyOn(service, 'pushHistoryState').and.throwError('');
+    const ieFallback = spyOn(service, 'changeLocationHref').and.callThrough();
+    service.replaceUrl('');
     // then
-    expect(navigated).toHaveBeenCalledTimes(2);
+    expect(ieFallback).toHaveBeenCalled();
   });
 
 });

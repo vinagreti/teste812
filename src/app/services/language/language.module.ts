@@ -1,11 +1,10 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { LOCALE_ID, NgModule, Optional, SkipSelf } from '@angular/core';
-import { NativeDateModule } from '@angular/material/core';
+import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { environment } from '@env/environment';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppLanguageLocaleInitializer } from './functions';
-import { LanguageInitializerModule } from './language-initializer.module';
+import { LanguageInitializerModule } from './language-initializer/language-initializer.module';
 import { LanguageService } from './language.service';
 
 export const GLOBAL_TRANSLATION_PATH = `${environment.basePath}/assets/i18n/location.`;
@@ -25,16 +24,10 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient]
       },
     }),
-    NativeDateModule,
   ],
   providers: [
     AppLanguageLocaleInitializer,
-    LanguageService, // mus be before LOCALE_ID because it uses LanguageService
-    {
-      provide: LOCALE_ID,
-      useFactory: (languageService: LanguageService) => languageService.language,
-      deps: [LanguageService]
-    }
+    LanguageService,
   ],
 })
 export class LanguageModule {

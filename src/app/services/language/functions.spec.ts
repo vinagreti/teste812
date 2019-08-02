@@ -1,5 +1,6 @@
 import { I18nLocale } from '@models/language';
-import { getAppGenericaLanguage, isLanguageUsedByThisApp } from './functions';
+import { appTestingMockReadOnlyProperties } from '@testing/functions';
+import { getAppGenericaLanguage, getBrowserLocale, isLanguageUsedByThisApp, languageLocaleIdFactory } from './functions';
 
 describe('LanguageFunctions', () => {
   const invalidLanguage = '!';
@@ -32,4 +33,26 @@ describe('LanguageFunctions', () => {
     expect(language).toBeFalsy();
   });
 
+  it('should get browserLocale', () => {
+    const language = getBrowserLocale();
+    expect(language).toBeTruthy();
+  });
+
+
+  it('should not get browserLocale', (done) => {
+    const bkp = navigator.languages;
+    const bkp1 = navigator.language;
+    appTestingMockReadOnlyProperties(navigator, 'languages', undefined);
+    appTestingMockReadOnlyProperties(navigator, 'language', undefined);
+    const language = getBrowserLocale();
+    expect(language).toBeUndefined();
+    appTestingMockReadOnlyProperties(navigator, 'languages', bkp);
+    appTestingMockReadOnlyProperties(navigator, 'language', bkp1);
+    done();
+  });
+
+  it('languageLocaleIdFactory should get language using language service', () => {
+    const language = languageLocaleIdFactory({language: 'xyz'} as any);
+    expect(language).toEqual('xyz');
+  });
 });

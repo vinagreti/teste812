@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { environment } from '@env/environment';
 import { REQUEST } from '@nguniversal/express-engine/tokens';
 import { ModuleMapLoaderModule } from '@nguniversal/module-map-ngfactory-loader';
-import { mockReadOnlyProperties } from '@testing/functions';
+import { appTestingMockReadOnlyProperties } from '@testing/functions';
 import { UniversalHttpInterceptorService } from './universal-http-interceptor.service';
 
 const NEXT = {handle: () => {}};
@@ -40,7 +40,7 @@ describe('UniversalHttpInterceptorService', () => {
   it('should getBaseUrl without port', () => {
     const service: any = TestBed.get(UniversalHttpInterceptorService);
     service.innerRequest = REQUEST_TOKEN;
-    mockReadOnlyProperties(process, 'env', {PORT: '123'});
+    appTestingMockReadOnlyProperties(process, 'env', {PORT: '123'});
     const baseUrl = service.getBaseUrl();
     expect(baseUrl).toEqual('http://test.com');
   });
@@ -55,10 +55,10 @@ describe('UniversalHttpInterceptorService', () => {
 
   it('should use the default port', (done) => {
     const processEnv = process.env;
-    mockReadOnlyProperties(process, 'env', undefined);
+    appTestingMockReadOnlyProperties(process, 'env', undefined);
     const service: any = TestBed.get(UniversalHttpInterceptorService);
     expect(service.port).toEqual(environment.serverPort);
-    mockReadOnlyProperties(process, 'env', processEnv);
+    appTestingMockReadOnlyProperties(process, 'env', processEnv);
     done();
   });
 

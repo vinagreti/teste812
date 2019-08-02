@@ -16,7 +16,7 @@ describe('AppWrapperDefaultComponent', () => {
         RouterTestingModule,
         NavbarTestingModule,
         TranslateModule.forRoot(),
-      ]
+      ],
     })
     .compileComponents();
   }));

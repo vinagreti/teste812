@@ -1,14 +1,9 @@
-import { Location } from '@angular/common';
-import { Injectable, NgZone } from '@angular/core';
-import { DateAdapter } from '@angular/material/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 import { I18nLocale } from '@models/language';
-import { TranslateService } from '@ngx-translate/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
-import { filter } from 'rxjs/operators';
-import { isLanguageUsedByThisApp } from './functions';
-import { LanguageInitializerService } from './language-initializer.service';
+import { LanguageAppConfigService } from './language-app-config/language-app-config.service';
+import { LanguageInitializerService } from './language-initializer/language-initializer.service';
 import { ASetLanguage } from './language.actions';
 import { LanguageState } from './language.state';
 
@@ -19,20 +14,14 @@ export class LanguageService {
 
   @Select(LanguageState.language) language$: Observable<I18nLocale>;
 
+  private windowLocation = window.location; // helps testing (we cannot override window.location directly)
+
   constructor(
-    private dateAdapter: DateAdapter<Date>,
     private languageInitializer: LanguageInitializerService,
-    private location: Location,
-    private router: Router,
     private store: Store,
-    private translateService: TranslateService,
-    private ngZone: NgZone,
+    private languageAppConfigService: LanguageAppConfigService,
   ) {
-    this.dateAdapter.localeChanges.subscribe(res => {
-      console.log(`LOCALTION CHANGED`);
-    })
     this.languageInitializer.initLanguageService();
-    this.appendRouterEventHanler();
   }
 
   get language() {
@@ -41,7 +30,7 @@ export class LanguageService {
 
   setLanguage(language: I18nLocale) {
     if (language !== this.language) {
-      this.setNewLanguage(language);
+      this.setNewLanguageInUrl(language);
       return this.setStoreLanguage(language);
     } else {
       return this.returnStoreObservable();
@@ -49,65 +38,48 @@ export class LanguageService {
   }
 
   private returnStoreObservable() {
-    const storeState = this.getStoredState();
+    const storeState = this.getStoredLanguage();
     return of(storeState);
   }
 
-  private setNewLanguage(language: I18nLocale) {
-    this.dateAdapter.setLocale(language);
-    this.translateService.use(language);
-    this.addLanguageToUrl(language);
+  private setNewLanguageInUrl(language: I18nLocale) {
+    this.replaceLanguageInUrl(language);
+    this.languageAppConfigService.setBaseHrefLanguage(language);
   }
 
   private setStoreLanguage(language: I18nLocale) {
     return this.store.dispatch(new ASetLanguage(language));
   }
 
-  private getStoredState() {
-    return this.store.selectSnapshot(LanguageState);
-  }
-
   private getStoredLanguage() {
     return this.store.selectSnapshot(LanguageState.language);
   }
 
-  private appendRouterEventHanler() {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-    ).subscribe(navigated => {
-      this.addLanguageToUrl(this.language);
-    });
+  private replaceLanguageInUrl(language: I18nLocale) {
+    const currentPath = `${location.pathname}${location.search}`;
+    const currentPathslices = currentPath.split('/');
+    currentPathslices[1] = language;
+    const newPath = currentPathslices.join('/');
+    const newUrl = location.href.replace(currentPath, newPath);
+    this.replaceUrl(newUrl);
   }
 
-  private mountI18nPath(language: I18nLocale) {
-    const urlLanguage = this.getUrlLanguage();
-    const isUsedByTheApp = isLanguageUsedByThisApp(urlLanguage as I18nLocale);
-    const paths = this.location.path().split('/').splice(1);
+  private pushHistoryState(newUrl: string) {
+    window.history.pushState({}, null, newUrl);
+  }
 
-    if (isUsedByTheApp) {
-      const locationWithoutLanguage = paths.slice(1).join('/');
-      if (locationWithoutLanguage) {
-        language = `/${language}/${locationWithoutLanguage}` as I18nLocale;
-      }
-    } else {
-      const locationWithoutLanguage = `${paths.join('/')}`;
-      if (locationWithoutLanguage) {
-        language = `/${language}/${locationWithoutLanguage}` as I18nLocale;
-      }
+  private changeLocationHref(newUrl: string) {
+    this.windowLocation.assign(newUrl);
+  }
+
+  private replaceUrl(newUrl) {
+    try {
+      this.pushHistoryState(newUrl);
+    } catch (error) {
+      try { // IE < 10 fallback
+        this.changeLocationHref(newUrl);
+      } catch { }
     }
-    return language;
   }
 
-  private getUrlLanguage() {
-    return this.location.path().split('/').splice(1)[0];
-  }
-
-  // avoids "Navigation triggered outside Angular zone" warning in unit tests
-  // https://github.com/angular/angular/issues/25837
-  private addLanguageToUrl(language: I18nLocale) {;
-    const newPath = this.mountI18nPath(language);
-    this.ngZone.run(() => {
-      this.router.navigate([newPath], { replaceUrl: true, queryParamsHandling: 'preserve' });
-    });
-  }
 }
