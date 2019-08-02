@@ -1,4 +1,3 @@
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { LOCALE_ID, NgModule, Optional, SkipSelf } from '@angular/core';
 import { NativeDateModule } from '@angular/material/core';
@@ -30,10 +29,12 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   providers: [
     AppLanguageLocaleInitializer,
-    { provide: LOCALE_ID, useValue: environment.defaultLanguage },
-    LanguageService,
-    Location,
-    {provide: LocationStrategy, useClass: PathLocationStrategy},
+    LanguageService, // mus be before LOCALE_ID because it uses LanguageService
+    {
+      provide: LOCALE_ID,
+      useFactory: (languageService: LanguageService) => languageService.language,
+      deps: [LanguageService]
+    }
   ],
 })
 export class LanguageModule {

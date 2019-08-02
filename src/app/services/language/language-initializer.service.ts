@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Inject, Injectable, LOCALE_ID, NgZone } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '@env/environment';
 import { I18nLocale } from '@models/language';
@@ -20,7 +20,6 @@ export class LanguageInitializerService {
     private router: Router,
     private store: Store,
     private translate: TranslateService,
-    @Inject(LOCALE_ID) private localeId: string,
   ) { }
 
   initLanguageService() {
@@ -61,8 +60,17 @@ export class LanguageInitializerService {
     return getAppGenericaLanguage(storeLanguage);
   }
 
+  private getBrowsersLanguage() {
+    const browserConfig = navigator as any;
+    if (browserConfig.languages && browserConfig.languages.length) {
+      return browserConfig.languages[0];
+    } else {
+      return browserConfig.userLanguage || browserConfig.language || browserConfig.browserLanguage || 'en';
+    }
+  }
+
   private getBrowsersGenericLanguage() {
-    const browsersLanguage = this.localeId;
+    const browsersLanguage = this.getBrowsersLanguage();
     return getAppGenericaLanguage(browsersLanguage);
   }
 
@@ -104,8 +112,11 @@ export class LanguageInitializerService {
     return `${language}/${this.location.path()}`;
   }
 
-  // avoids "Navigation triggered outside Angular zone" warning in unit tests
-  // https://github.com/angular/angular/issues/25837
+  /*
+   * ngZone.run
+   * avoids "Navigation triggered outside Angular zone" warning in unit tests
+   * https://github.com/angular/angular/issues/25837
+  */
   private addLanguageToUrl(language: I18nLocale) {
     const newPath = this.mountI18nPath(language);
     this.ngZone.run(() => {
