@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 
 
 
@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
   declarations: [],
   imports: [
     CommonModule,
-    RouterModule,
+    RouterTestingModule,
   ]
 })
-export class AuthServiceModule { }
+export class AuthServiceTestingModule { }

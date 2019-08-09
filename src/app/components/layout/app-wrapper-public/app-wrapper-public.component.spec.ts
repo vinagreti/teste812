@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { AppWarpperContentModule } from '../app-warpper-content/app-warpper-content.module';
 import { NavbarTestingModule } from '../navbar/testing/navbar-testing.module';
 import { AppWrapperPublicComponent } from './app-wrapper-public.component';
 
@@ -16,6 +17,7 @@ describe('AppWrapperPublicComponent', () => {
         RouterTestingModule,
         NavbarTestingModule,
         TranslateModule.forRoot(),
+        AppWarpperContentModule,
       ],
     })
     .compileComponents();

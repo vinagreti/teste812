@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { environment } from '@env/environment';
 import { I18nLocale } from '@models/language';
 import { LanguageService } from '@services/language';
@@ -16,6 +16,8 @@ export class NavbarComponent implements OnInit {
   language$: Observable<I18nLocale>;
 
   languages = I18nLocale;
+
+  @Input() titleLink = '/';
 
   constructor(
     private languageService: LanguageService,

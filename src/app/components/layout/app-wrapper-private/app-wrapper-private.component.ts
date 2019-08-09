@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AuthService } from '@services/auth';
 
 @Component({
   selector: 'app-wrapper-private',
@@ -8,9 +9,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 })
 export class AppWrapperPrivateComponent {
 
-  constructor() { }
+  constructor(
+    private authService: AuthService
+  ) { }
 
   logout() {
+    this.authService.logout();
   }
 
 }

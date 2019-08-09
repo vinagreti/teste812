@@ -18,13 +18,13 @@ export class AuthGuard implements CanActivate, CanActivateChild {
 
   canActivate( next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.authService.logged$.pipe(
-      map(logged => logged || this.router.createUrlTree([FALLBACK_PATH])),
+      map(logged => !!logged || this.router.createUrlTree([FALLBACK_PATH])),
     );
   }
 
   canActivateChild( next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.authService.logged$.pipe(
-      map(logged => logged || this.router.createUrlTree([FALLBACK_PATH])),
+      map(logged => !!logged || this.router.createUrlTree([FALLBACK_PATH])),
     );
   }
 }
