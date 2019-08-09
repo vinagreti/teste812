@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-app-wrapper-public',
+  selector: 'app-wrapper-public',
   templateUrl: './app-wrapper-public.component.html',
   styleUrls: ['./app-wrapper-public.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,16 +1,16 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-app-wrapper-private',
+  selector: 'app-wrapper-private',
   templateUrl: './app-wrapper-private.component.html',
   styleUrls: ['./app-wrapper-private.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppWrapperPrivateComponent implements OnInit {
+export class AppWrapperPrivateComponent {
 
   constructor() { }
 
-  ngOnInit() {
+  logout() {
   }
 
 }

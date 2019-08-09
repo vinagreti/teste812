@@ -1,20 +1,23 @@
 <mat-toolbar color="accent">
   <a [routerLink]="['/']" routerLinkActive=""><h1> {{ 'app.title' | translate }} </h1></a>
+
   <span class="center-space"></span>
-  <span *ngIf="(language$ | async) as language">
+
+  <span *ngIf="(language$ | async) as language" >
     <ng-container *ngIf="i18nLocales.length > 1">
-      <ng-container *ngFor="let i18nLocale of i18nLocales">
-        &nbsp;
-        <button mat-flat-button [color]="language === i18nLocale ? 'primary' : ''" (click)="language === i18nLocale ? false : setLanguage(i18nLocale)">{{i18nLocale}}</button>
-      </ng-container>
+      <mat-menu #appMenu="matMenu">
+        <ng-container *ngFor="let i18nLocale of i18nLocales">
+          <button mat-menu-item *ngIf="language !== i18nLocale" (click)="setLanguage(i18nLocale)">{{i18nLocale}}</button>
+        </ng-container>
+      </mat-menu>
+      <button mat-flat-button [matMenuTriggerFor]="appMenu">{{language}}</button>
     </ng-container>
   </span>
+
+  &nbsp;
+
   <span>
-      &nbsp;
-    <button mat-flat-button routerLink="/login">Login</button>
+    <ng-content></ng-content>
   </span>
-  <span>
-    &nbsp;
-    <button mat-flat-button routerLink="/dashboard">dash</button>
-  </span>
+
 </mat-toolbar>

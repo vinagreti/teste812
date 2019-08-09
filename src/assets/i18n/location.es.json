@@ -3,6 +3,10 @@
     "title": "Prueba 812"
   },
   "label": {
+    "Dashboard": "Painel",
+    "Home": "Comienzo",
+    "Login": "Entrar",
+    "Logout": "Salir",
     "Page_not_found": "Página no encontrada"
   }
 }
