@@ -113,7 +113,7 @@ describe('LanguageService', () => {
   it('should change location.href as a fallback to missed window.history.pushState', () => {
     // given
     const service: any = TestBed.get(LanguageService);
-    service.windowLocation = {assign: () => {}};
+    service.windowLocation = { assign: () => { } };
     // when
     spyOn(service, 'pushHistoryState').and.throwError('');
     const ieFallback = spyOn(service, 'changeLocationHref').and.callThrough();

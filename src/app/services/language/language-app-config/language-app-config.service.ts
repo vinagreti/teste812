@@ -9,12 +9,15 @@ export class LanguageAppConfigService {
 
   private isServer: boolean;
 
+  private originalBaseHref: string;
+
   constructor(
     private appModuleRef: NgModuleRef<AppModule>,
     @Inject(DOCUMENT) private document: Document,
     @Inject(PLATFORM_ID) private platformId,
   ) {
     this.detectEnv();
+    this.saveOriginalBaseHref();
   }
 
   setBaseHrefLanguage(language: I18nLocale) {
@@ -37,6 +40,12 @@ export class LanguageAppConfigService {
     }
   }
 
+  private saveOriginalBaseHref() {
+    if (!this.isServer) {
+      this.originalBaseHref = this.baseHref;
+    }
+  }
+
   get baseHrefLanguage() {
     const pathSlices = this.baseHref.split('/').filter(slice => !!slice);
     const baseHrefLanguage = (pathSlices[pathSlices.length - 1]) as I18nLocale;
@@ -48,15 +57,27 @@ export class LanguageAppConfigService {
     this.isServer = isPlatformServer(this.platformId);
   }
 
-  private setHtmlLanguage(language) {
+  private setHtmlLanguage(language: string) {
     this.document.getElementsByTagName('html')[0].setAttribute('lang', language);
   }
 
-  private setInitialBaseHrefLanguage(language) {
-    this.baseTag.setAttribute('href', `/${language}`);
+  private setInitialBaseHrefLanguage(language: string) {
+    const initialBaseHref = this.getInitialBaseHrefTranslated(language);
+    this.baseTag.setAttribute('href', initialBaseHref);
   }
 
-  private replaceBaseHrefLanguage(language) {
+  private getInitialBaseHrefTranslated(language: string) {
+    let translatedBaseHref: string;
+    if (this.originalBaseHref) {
+      const divisor = this.originalBaseHref.endsWith('/') ? '' : '/';
+      translatedBaseHref = `${this.originalBaseHref}${divisor}${language}`;
+    } else {
+      translatedBaseHref = `/${language}`;
+    }
+    return translatedBaseHref;
+  }
+
+  private replaceBaseHrefLanguage(language: string) {
     const newBaseHref = this.baseHref.replace(this.baseHrefLanguage, language);
     this.baseTag.setAttribute('href', newBaseHref);
   }
