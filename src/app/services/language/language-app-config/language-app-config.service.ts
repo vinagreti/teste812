@@ -16,7 +16,7 @@ export class LanguageAppConfigService {
     @Inject(DOCUMENT) private document: Document,
     @Inject(PLATFORM_ID) private platformId,
   ) {
-    this.detectEnv();
+    this.detectPlatform();
     this.saveOriginalBaseHref();
   }
 
@@ -53,7 +53,7 @@ export class LanguageAppConfigService {
     return languageInBaseHref;
   }
 
-  private detectEnv() {
+  private detectPlatform() {
     this.isServer = isPlatformServer(this.platformId);
   }
 

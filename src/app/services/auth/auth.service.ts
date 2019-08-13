@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 const MEMORY_KEY = 'token';
 
@@ -9,13 +10,19 @@ const MEMORY_KEY = 'token';
 })
 export class AuthService {
 
-  private innerLoggedState$ = new BehaviorSubject(this.getFromMemory());
+  logged$: Observable<string>;
 
-  logged$ = this.innerLoggedState$.asObservable();
+  private innerLoggedState$: Subject<string>;
+
+  private isServer: boolean;
 
   constructor(
     private router: Router,
-  ) { }
+    @Inject(PLATFORM_ID) private platformId,
+  ) {
+    this.detectPlatform();
+    this.createLoggedStatusStreams();
+  }
 
   login(token: string) {
     this.setInMemory(token);
@@ -31,12 +38,27 @@ export class AuthService {
     return this.logged$;
   }
 
+  private createLoggedStatusStreams() {
+    this.innerLoggedState$ = new BehaviorSubject(this.getFromMemory());
+    this.logged$ = this.innerLoggedState$.asObservable();
+  }
+
+  private detectPlatform() {
+    this.isServer = isPlatformServer(this.platformId);
+  }
+
   private getFromMemory() {
-    return localStorage.getItem(MEMORY_KEY) || undefined;
+    if (!this.isServer) {
+      return localStorage.getItem(MEMORY_KEY) || undefined;
+    } else {
+      return undefined;
+    }
   }
 
   private setInMemory(token: string) {
-    localStorage.setItem(MEMORY_KEY, token);
+    if (!this.isServer) {
+      localStorage.setItem(MEMORY_KEY, token);
+    }
   }
 
 }

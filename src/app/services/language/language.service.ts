@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
 import { I18nLocale } from '@models/language';
 import { Select, Store } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
@@ -14,14 +15,16 @@ export class LanguageService {
 
   @Select(LanguageState.language) language$: Observable<I18nLocale>;
 
-  private windowLocation = window.location; // helps testing (we cannot override window.location directly)
+  private location: Location; // helps testing (we cannot override window.location directly)
 
   constructor(
     private languageInitializer: LanguageInitializerService,
     private store: Store,
     private languageAppConfigService: LanguageAppConfigService,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.languageInitializer.initLanguageService();
+    this.detectLocation();
   }
 
   get language() {
@@ -35,6 +38,10 @@ export class LanguageService {
     } else {
       return this.returnStoreObservable();
     }
+  }
+
+  private detectLocation() {
+    this.location = this.document.location;;
   }
 
   private returnStoreObservable() {
@@ -69,7 +76,7 @@ export class LanguageService {
   }
 
   private changeLocationHref(newUrl: string) {
-    this.windowLocation.assign(newUrl);
+    this.location.assign(newUrl);
   }
 
   private replaceUrl(newUrl) {
